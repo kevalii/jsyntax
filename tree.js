@@ -77,7 +77,7 @@ const initNode = (name, category) => {
 }
 
 /*******************************************************************************
-                                   vectorize
+                                 constructTree
     Given a string, a start separator, an end separator, and a parent node,
     produces a new tree initialized at parent.
     Returns true if validate returns true, otherwise false.
@@ -124,7 +124,7 @@ function constructTree (str, sep1, sep2, parent) {
                 str_acc += (char.value === undefined ? '' : char.value)
                 if (char.done == true) {
                     for (el of lst_acc) {
-                        vectorize(el, sep1, sep2, node)
+                        constructTree(el, sep1, sep2, node)
                     }
                     return true
                 }
@@ -144,3 +144,6 @@ const treeTester = (head) => {
 /*******************************************************************************
                             End top-level functions
 *******************************************************************************/
+
+exports.constructTree = constructTree
+exports.initNode = initNode

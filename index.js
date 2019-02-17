@@ -1,8 +1,11 @@
-
+var d3 = require('d3')
+var tree = require('./tree.js')
  //constructTree('[S [NP [DET The][N koala]][VP [V ran][PP [P to][NP [DET the][N store]]]]]', '[', ']', head)
 var clusterLayout = d3.cluster()
   .size([400, 200])
 
+const head = tree.initNode('Tree', undefined)
+tree.constructTree('[S [NP [DET The][N koala]][VP [V ran]]]', '[', ']', head)
 var root = d3.hierarchy(head)
 
 clusterLayout(root)
