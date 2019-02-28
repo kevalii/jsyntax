@@ -1,0 +1,19 @@
+svg {
+  width: 10000;
+  height: 10000;
+}
+
+.node {
+    fill: black;
+    stroke: none;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1px;
+}
+
+.node text {
+   font: 12px sans-serif;
+}

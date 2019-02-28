@@ -67,10 +67,10 @@ const extract = (str, sep1, sep2) => {
 
 const initNode = (name, category) => {
   return {
-    name: name,
-    category: category,
-    children: [],
-    attachChild: function (child) {
+    "name": name,
+    "category": category,
+    "children": [],
+    "attachChild": function (child) {
       return this.children[this.children.push(child) - 1]
     }
   }
@@ -123,7 +123,7 @@ function constructTree (str, sep1, sep2, parent) {
             default:
                 str_acc += (char.value === undefined ? '' : char.value)
                 if (char.done == true) {
-                    for (el of lst_acc) {
+                    for (const el of lst_acc) {
                         constructTree(el, sep1, sep2, node)
                     }
                     return true
@@ -144,6 +144,9 @@ const treeTester = (head) => {
 /*******************************************************************************
                             End top-level functions
 *******************************************************************************/
+export {constructTree, initNode}
 
-exports.constructTree = constructTree
-exports.initNode = initNode
+
+// CommonJS exports
+// exports.constructTree = constructTree
+// exports.initNode = initNode
