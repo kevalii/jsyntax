@@ -15,30 +15,30 @@ var d3 = require('d3')
 *******************************************************************************/
 
 function update(source) {
-    // Set properties of SVG element; should be adjusted for scalability
-    var margin = {top: 40, right: 120, bottom: 20, left: 120},
-    	width = 2000 - margin.right - margin.left,
-    	height = 1000 - margin.top - margin.bottom;
-
     var i = 0;
 
     // Compute the new tree layout
+    var root = d3.hierarchy(source.children[0])
+    let bounds = d3.selection()._groups[0][0].getBoundingClientRect()
+    console.log(d3.selection()._groups[0][0].clientWidth)
+    // Set properties of SVG element; should be adjusted for scalability
+    let width = bounds.width,
+    	  height = bounds.height ;
 
-    var root = d3.hierarchy(source)
     var tree = d3.tree()
-    	.size([height, width]).separation(function separation(a, b) {
+    	.size([width, height]).separation(function separation(a, b) {
             return a.parent == b.parent ? 2 : 1;
         });;
 
     // Initialize SVG element on page
-    var svg = d3.select("div[id=root]").append("svg")
-    	.attr("width", width + margin.right + margin.left)
-    	.attr("height", height + margin.top + margin.bottom)
+    var svg = d3.select("body").append("svg")
+    	.attr("viewBox", `-30 -30 ${1.2 * width} ${width}`)
+      .attr("preserveAspectRatio", "none")
+      .attr("position", "absolute")
         .append("g")
-    	.attr("transform", "translate(" + (margin.left + width/2) + "," + margin.top + ")");
+    	//.attr("transform", "translate(" + (margin.left + width/2) + "," + margin.top + ")");
 
     var nodes = tree(root).descendants(), links = tree(root).links();
-    console.log(nodes)
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 100; });
 
@@ -71,6 +71,9 @@ function update(source) {
         .attr('y1', function(d) {return d.source.y;})
         .attr('x2', function(d) {return d.target.x;})
         .attr('y2', function(d) {return d.target.y - 30;});
+
+    console.log(tree(root).data)
+    console.log(links)
 }
 
-export {update}
+export {update} ;
