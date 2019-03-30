@@ -10,5 +10,21 @@
 }
 
 .node text {
-   font: 12px sans-serif;
+   font: 1em sans-serif;
+}
+
+body {
+  padding: 2%;
+  color: white;
+  background-color: #204060;
+}
+
+button {
+  margin: 1%;
+}
+svg {
+  background-color: white;
+  border-radius: 50px;
+  padding: 2%;
+  margin: 5%
 }

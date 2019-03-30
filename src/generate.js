@@ -20,19 +20,27 @@ function update(source) {
     // Compute the new tree layout
     var root = d3.hierarchy(source.children[0])
     let bounds = d3.selection()._groups[0][0].getBoundingClientRect()
-    console.log(d3.selection()._groups[0][0].clientWidth)
+
     // Set properties of SVG element; should be adjusted for scalability
     let width = bounds.width,
     	  height = bounds.height ;
 
+    const num_nodes = root.descendants().length
+
     var tree = d3.tree()
     	.size([width, height]).separation(function separation(a, b) {
-            return a.parent == b.parent ? 2 : 1;
+            return a.parent == b.parent ? 1.5 : 1;
         });;
 
     // Initialize SVG element on page
-    var svg = d3.select("body").append("svg")
-    	.attr("viewBox", `-30 -30 ${1.2 * width} ${width}`)
+    if (d3.select("#treeSVG")._groups[0][0] != null) {
+
+      d3.select("#treeSVG").remove()
+    }
+
+    var svg = d3.select("#svg").append("svg")
+      .attr("id", "treeSVG")
+    	.attr("viewBox", `-30 -30 ${1.2 * width - num_nodes} ${width - (8000 / num_nodes)}`)
       .attr("preserveAspectRatio", "none")
       .attr("position", "absolute")
         .append("g")
@@ -71,9 +79,6 @@ function update(source) {
         .attr('y1', function(d) {return d.source.y;})
         .attr('x2', function(d) {return d.target.x;})
         .attr('y2', function(d) {return d.target.y - 30;});
-
-    console.log(tree(root).data)
-    console.log(links)
 }
 
 export {update} ;

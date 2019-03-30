@@ -24,17 +24,17 @@ const trimSpace = str => str.replace(/^\040+|\040+$/g, '')
 
 // Returns true if the counts of sep1 and sep2 in str are equal, false otherwise
 const validate = (str, sep1, sep2) => {
-    return (str.match(new RegExp(regexEscape(sep1), "g")) || []).length ==
-           (str.match(new RegExp(regexEscape(sep2), "g")) || []).length
+  str.replace(new RegExp(regexEscape(sep2) + ' ' + regexEscape(sep1), "g"), '][')
+  return (str.match(new RegExp(regexEscape(sep1), "g")) || []).length ==
+         (str.match(new RegExp(regexEscape(sep2), "g")) || []).length
 }
-
 /*******************************************************************************
                                     extract
     Given a node expression, extract the category and its content, if any.
     A node containing content is terminal (i.e. has no children e.g. 'N noun').
     The function assumes that strip() has been applied to str first.
 *******************************************************************************/
-
+// TODO: returning a list here just a little weird
 const extract = (str, sep1, sep2) => {
     if (str.indexOf(sep1) == -1) {
         if (str.indexOf(' ') == -1) {
@@ -84,12 +84,19 @@ const initNode = (name, category) => {
     str is an argument vector formed with a valid syntactic notation; it sets
     definitions for nodes, the subconstituents of said nodes, etc.
 
-    The nature of the parser enforces constituency-based relations, although one
-    caveat is that terminal nodes have a category and its content together in
-    one node. This is not a technical necessity but just a matter of preference.
+                                constructTreeW
+    Given a string, an initial indent level, and a parent node, producesa new
+    tree initialized at parent. Functionally the same as constructTreeW, but
+    the input uses indents and newlines to instead of separator to represent
+    trees.
+
+    The nature of both parsers enforces constituency-based relations, although
+    one caveat is that terminal nodes have a category and its content together in
+    one node. This is not a technical necessity but just a matter of preference
+    subject to change.
 *******************************************************************************/
 
-function constructTree (str, sep1, sep2, parent) {
+function constructTree(str, sep1, sep2, parent) {
     if (!validate(str, sep1, sep2))
         return false
 
@@ -131,20 +138,41 @@ function constructTree (str, sep1, sep2, parent) {
                 break
         }    }
 }
+// Enumerates the number of tab characters in a string
+const enumtabs = str => (str.match(/\t/g) || []).length
+// TODO: provide documentation for constructTreeW
+function constructTreeW (str, ntabs, parent) {
+  const arr = str.split('\n')
+  const children = arr.map((str, i) => {
+    if (enumtabs(str) == ntabs + 1) {
+      return [str, i]
+    }
+  }).filter(str => str != undefined)
+
+  const nchildren = children.map((el, i) => {
+    let next_el = i != children.length - 1 ? children[i + 1][1] : arr.length
+    return arr.slice(children[i][1] + 1, next_el)
+  })
+
+  children.forEach((el, i) => {
+    let [name, category] = el[0].trim().split(' ')
+    let node = parent.attachChild(initNode(name, category))
+    constructTreeW(nchildren[i].map(el => el + '\n').join(''), ntabs + 1, node)
+  })
+}
 
 // Helper function to help test that a tree has been correctly generated
 const treeTester = (head) => {
-  for (child of head.children) {
+  for (let child of head.children) {
     console.log(`${child.name} (${child.category}) is a child of ${head.name} (${head.category})`)
     if (child.children != undefined)
       treeTester(child)
   }
 }
-
 /*******************************************************************************
                             End top-level functions
 *******************************************************************************/
-export {constructTree, initNode}
+export {validate, constructTree, initNode}
 
 
 // CommonJS exports
